@@ -39,5 +39,8 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
+      - name: Run update configure
+        run: eas update:configure
+
       - name: Publish update
         run: eas update --auto
