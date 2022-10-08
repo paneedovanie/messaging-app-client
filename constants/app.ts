@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = process.env.NODE_ENV || 'development';
 
 const domain = isDevelopment
 	? Platform.OS === 'web'

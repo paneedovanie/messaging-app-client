@@ -7,4 +7,5 @@ export type Message = {
 	channel: Channel;
 	user: User;
 	content: string;
+	unread?: number;
 };

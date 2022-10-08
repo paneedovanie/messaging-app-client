@@ -37,7 +37,7 @@ export const MessagesScreen = ({ navigation }) => {
 			<ScrollView>
 				{messages
 					.sort((a: any, b: any) => a.createdAt - b.createdAt)
-					.map(({ channel, content, createdAt }, i) => {
+					.map(({ channel, content, createdAt, unread }, i) => {
 						const otherUser = channel?.users?.find(({ id }) => id !== user.id);
 						const channelTitle = otherUser?.name;
 						const channelColor = otherUser?.color;
@@ -90,6 +90,22 @@ export const MessagesScreen = ({ navigation }) => {
 											{formatDistance(new Date(createdAt), new Date())}
 										</Text>
 									</View>
+									{!!unread && (
+										<View
+											style={{
+												backgroundColor: Color.Red,
+												borderRadius: 15,
+												width: 30,
+												height: 30,
+												justifyContent: 'center',
+												alignItems: 'center',
+											}}
+										>
+											<Text variant={TextVariant.White}>
+												{unread > 99 ? '99+' : unread}
+											</Text>
+										</View>
+									)}
 								</View>
 							</Pressable>
 						);

@@ -22,7 +22,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Color } from '../constants';
 import { Avatar } from './Avatar';
-import { View } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { Text } from './Text';
 import { Badge } from './Badge';
 import { UpdateUserScreen } from '../screens/UpdateUserScreen';
@@ -80,6 +80,7 @@ export const AppLayout = () => {
 	if (isAuth && user) {
 		return (
 			<SocketContextProvider userId={user.id || ''}>
+				<StatusBar />
 				<Stack.Navigator>
 					<Stack.Screen
 						name='Home'

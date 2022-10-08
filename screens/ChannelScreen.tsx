@@ -21,6 +21,7 @@ import { Message } from '../lib/message';
 import { useGetChannelMessages } from '../lib/channel/hooks/useGetChannelMessages';
 import { useSubmitMessage } from '../lib/message/hooks/useSubmitMessage';
 import { formatDistance } from 'date-fns';
+import * as Notifications from 'expo-notifications';
 
 const ChannelMessage = ({
 	currentUser,
@@ -155,6 +156,21 @@ export const ChannelScreen = ({ navigation, route: { params } }) => {
 		setTimeout(() => {
 			scrollRef.current.scrollToEnd({ animated: false });
 		}, 100);
+
+		Notifications.setNotificationHandler({
+			handleNotification: (n) => {
+				const { channelId } = n?.request?.content?.data ?? {};
+				const showNotification = channelId !== params.channelId;
+
+				return new Promise((resolve) =>
+					resolve({
+						shouldShowAlert: showNotification,
+						shouldPlaySound: false,
+						shouldSetBadge: false,
+					})
+				);
+			},
+		});
 	}, [channel]);
 
 	return (
