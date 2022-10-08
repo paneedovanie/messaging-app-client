@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "680342548788",
+    "project_id": "edhi-messaging-app",
+    "storage_bucket": "edhi-messaging-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:680342548788:android:33bff22f4827d8ef393561",
+        "android_client_info": {
+          "package_name": "com.paneedovanie.mobileapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "680342548788-75shlsag986lm46keqom2ebh7b14mbia.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9QYNwCgiRfkgie5bc0wnX7SNfq1-t4bg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "680342548788-75shlsag986lm46keqom2ebh7b14mbia.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
