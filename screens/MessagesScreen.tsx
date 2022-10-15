@@ -11,26 +11,24 @@ import {
 	useUserContext,
 } from '../components';
 import { Color } from '../constants';
-import { Message, useGetLatestMessages } from '../lib/message';
-
-import { User } from '../lib/user/types';
+import { useGetLatestMessages } from '../lib/message';
 import { SocketEvent } from '../lib/user/types/enums';
-import { getChannelAvatarColor, getMessageTitle } from '../lib/utils/main.util';
 
 export const MessagesScreen = ({ navigation }) => {
 	const { user } = useUserContext();
 	const { socket } = useSocketContext();
-	const {
-		data: messages = [],
-		isFetching,
-		refetch,
-	} = useGetLatestMessages(user.id);
+	const { data: messages, refetch } = useGetLatestMessages({
+		refetchInterval: 3000,
+	});
 
 	useEffect(() => {
 		socket.on(SocketEvent.ChannelUpdated, refetch);
+		return () => {
+			socket.removeListener(SocketEvent.ChannelUpdated);
+		};
 	}, []);
 
-	if (isFetching) return <Loading />;
+	if (!messages) return <Loading />;
 
 	return (
 		<View>

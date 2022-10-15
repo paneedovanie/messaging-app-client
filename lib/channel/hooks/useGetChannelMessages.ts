@@ -7,10 +7,11 @@ import { Channel } from '../entities';
 export const getChannelMessages = (
 	socket: Socket,
 	id: string
-): Promise<Channel> =>
-	new Promise((res) => {
+): Promise<Channel> => {
+	return new Promise((res) => {
 		socket.emit(SocketEvent.GetChannelMessages, id, res);
 	});
+};
 
 export const useGetChannelMessages = (
 	id: string,

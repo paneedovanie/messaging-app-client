@@ -18,30 +18,32 @@ import { useNavigation } from '@react-navigation/native';
 
 const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
 
-TaskManager.defineTask(
-	BACKGROUND_NOTIFICATION_TASK,
-	({ data, error, executionInfo }) => {
-		Notifications.setNotificationHandler({
-			handleNotification: async () => ({
-				shouldShowAlert: true,
-				shouldPlaySound: true,
-				shouldSetBadge: true,
-			}),
-		});
-		console.log('Received a notification in the background!');
-		// Do something with the notification data
-	}
-);
+if (Platform.OS === 'android') {
+	TaskManager.defineTask(
+		BACKGROUND_NOTIFICATION_TASK,
+		({ data, error, executionInfo }) => {
+			Notifications.setNotificationHandler({
+				handleNotification: async () => ({
+					shouldShowAlert: true,
+					shouldPlaySound: true,
+					shouldSetBadge: true,
+				}),
+			});
+			console.log('Received a notification in the background!');
+			// Do something with the notification data
+		}
+	);
 
-Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
+	Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
 
-Notifications.setNotificationHandler({
-	handleNotification: async () => ({
-		shouldShowAlert: true,
-		shouldPlaySound: false,
-		shouldSetBadge: false,
-	}),
-});
+	Notifications.setNotificationHandler({
+		handleNotification: async () => ({
+			shouldShowAlert: true,
+			shouldPlaySound: false,
+			shouldSetBadge: false,
+		}),
+	});
+}
 
 const registerForPushNotificationsAsync = async () => {
 	let token;
@@ -100,7 +102,7 @@ export const NotificationContextProvider = ({
 		if (!token) {
 			token = await registerForPushNotificationsAsync();
 			if (!isWeb) await SecureStore.setItemAsync('pushToken', token);
-			await Updates.reloadAsync();
+			// await Updates.reloadAsync();
 		}
 		mutate({ token });
 	};
@@ -110,39 +112,39 @@ export const NotificationContextProvider = ({
 
 		getPushToken();
 
-		// This listener is fired whenever a notification is received while the app is foregrounded
-		notificationListener.current =
-			Notifications.addNotificationReceivedListener((notification) => {
-				setNotification(notification);
-			});
+		// // This listener is fired whenever a notification is received while the app is foregrounded
+		// notificationListener.current =
+		// 	Notifications.addNotificationReceivedListener((notification) => {
+		// 		setNotification(notification);
+		// 	});
 
-		// This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-		responseListener.current =
-			Notifications.addNotificationResponseReceivedListener((response) => {
-				const {
-					notification: {
-						request: { content },
-					},
-				} = response;
-				const { screen, channelId, title } = content.data;
-				//when the user taps on the notification, this line checks if they //are suppose to be taken to a particular screen
-				if (screen) {
-					navigation.navigate(
-						screen as never,
-						{
-							channelId: channelId,
-							title: title,
-						} as never
-					);
-				}
-			});
+		// // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+		// responseListener.current =
+		// 	Notifications.addNotificationResponseReceivedListener((response) => {
+		// 		const {
+		// 			notification: {
+		// 				request: { content },
+		// 			},
+		// 		} = response;
+		// 		const { screen, channelId, title } = content.data;
+		// 		//when the user taps on the notification, this line checks if they //are suppose to be taken to a particular screen
+		// 		if (screen) {
+		// 			navigation.navigate(
+		// 				screen as never,
+		// 				{
+		// 					channelId: channelId,
+		// 					title: title,
+		// 				} as never
+		// 			);
+		// 		}
+		// 	});
 
-		return () => {
-			Notifications.removeNotificationSubscription(
-				notificationListener.current
-			);
-			Notifications.removeNotificationSubscription(responseListener.current);
-		};
+		// return () => {
+		// 	Notifications.removeNotificationSubscription(
+		// 		notificationListener.current
+		// 	);
+		// 	Notifications.removeNotificationSubscription(responseListener.current);
+		// };
 	}, [user]);
 
 	return (

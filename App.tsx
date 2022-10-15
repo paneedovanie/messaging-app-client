@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { UserContextProvider } from './components/UserContext';
 import { AppLayout } from './components/AppLayout';
 import { NotificationContextProvider } from './components/NotificationContext';
+import { Platform } from 'react-native';
 
 const queryClient = new QueryClient();
 

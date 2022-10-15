@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -22,6 +22,7 @@ import { useGetChannelMessages } from '../lib/channel/hooks/useGetChannelMessage
 import { useSubmitMessage } from '../lib/message/hooks/useSubmitMessage';
 import { formatDistance } from 'date-fns';
 import * as Notifications from 'expo-notifications';
+import { useIsFocused } from '@react-navigation/native';
 
 const ChannelMessage = ({
 	currentUser,
@@ -114,22 +115,18 @@ const SubmitMessageSchema = Yup.object()
 	})
 	.required();
 
-export const ChannelScreen = ({ navigation, route: { params } }) => {
+export const ChannelScreen = ({ navigation, route }) => {
+	const { params } = route;
 	const scrollRef = useRef<any>();
 	const { user: currentUser } = useUserContext();
-	const { data: channel, refetch } = useGetChannelMessages(params.channelId);
+	const isFocused = useIsFocused();
+	const { data: channel, refetch } = useGetChannelMessages(params.channelId, {
+		enabled: !!params.channelId,
+	});
 	const { socket } = useSocketContext();
 	const { mutate: submit, isLoading } = useSubmitMessage({
 		onSuccess: () => resetForm(),
 	});
-
-	useEffect(() => {
-		const otherUser = channel?.users?.find(({ id }) => id !== currentUser.id);
-		navigation.setParams({
-			title: params.title,
-			active: otherUser?.online?.active,
-		});
-	}, [channel]);
 
 	const { values, errors, handleChange, submitForm, resetForm } = useFormik({
 		validationSchema: SubmitMessageSchema,
@@ -146,11 +143,22 @@ export const ChannelScreen = ({ navigation, route: { params } }) => {
 	useEffect(() => {
 		socket.on(SocketEvent.ChannelUpdated, ({ channelId }) => {
 			if (channelId !== params.channelId) return;
+			console.log(channelId);
 			refetch();
 		});
+
+		return () => {
+			socket.removeListener(SocketEvent.ChannelUpdated);
+		};
 	}, []);
 
 	useEffect(() => {
+		const otherUser = channel?.users?.find(({ id }) => id !== currentUser.id);
+		navigation.setParams({
+			title: params.title,
+			active: otherUser?.online?.active,
+		});
+
 		if (!scrollRef?.current) return;
 
 		setTimeout(() => {

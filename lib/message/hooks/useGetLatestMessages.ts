@@ -4,22 +4,16 @@ import { useSocketContext } from '../../../components';
 import { SocketEvent } from '../../user/types/enums';
 import { Message } from '../entities';
 
-export const getLatestMessages = (
-	socket: Socket,
-	id: string
-): Promise<Message[]> =>
+export const getLatestMessages = (socket: Socket): Promise<Message[]> =>
 	new Promise((res) => {
-		socket.emit(SocketEvent.GetLatestMessages, id, res);
+		socket.emit(SocketEvent.GetLatestMessages, res);
 	});
 
-export const useGetLatestMessages = (
-	id: string,
-	options?: UseQueryOptions<Message[]>
-) => {
+export const useGetLatestMessages = (options?: UseQueryOptions<Message[]>) => {
 	const { socket } = useSocketContext();
 	return useQuery<Message[]>(
-		[SocketEvent.GetLatestMessages, id],
-		() => getLatestMessages(socket, id),
+		[SocketEvent.GetLatestMessages],
+		() => getLatestMessages(socket),
 		options
 	);
 };

@@ -6,18 +6,11 @@ import {
 	useState,
 	SetStateAction,
 	useEffect,
-	useRef,
 } from 'react';
 import { User } from '../lib/user/types';
 import * as SecureStore from 'expo-secure-store';
-import * as Device from 'expo-device';
-import { Text } from './Text';
 import { useGetProfile } from '../lib/user/hooks';
-import { useSocketContext } from './SocketContext';
 import { Platform } from 'react-native';
-import { Loading } from './Loading';
-import { Subscription } from 'expo-modules-core';
-import * as Notifications from 'expo-notifications';
 
 export const UserContext = createContext<{
 	user?: User;
@@ -44,14 +37,16 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
 	const setAccessToken = async (token: string) => {
 		if (isWeb) localStorage.setItem('accessToken', token);
-		await SecureStore.setItemAsync('accessToken', token);
+		else await SecureStore.setItemAsync('accessToken', token);
 	};
 
 	const clear = async () => {
 		setUser(undefined);
 		if (isWeb) localStorage.removeItem('accessToken');
-		await SecureStore.deleteItemAsync('accessToken');
-		await SecureStore.deleteItemAsync('pushToken');
+		else {
+			await SecureStore.deleteItemAsync('accessToken');
+			await SecureStore.deleteItemAsync('pushToken');
+		}
 	};
 
 	const getToken = async () => {
